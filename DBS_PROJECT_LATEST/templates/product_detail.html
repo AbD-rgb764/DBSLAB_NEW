@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.Pname }} - SmartInventory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('customer_dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('customer_products') }}">Products</a></li>
+                <li class="breadcrumb-item active">{{ product.Pname }}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('customer_products') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-box-open fa-5x text-primary mb-3"></i>
+                <h3>{{ product.Pname }}</h3>
+                <p class="text-muted">{{ product.Category }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Product Details</h4>
+            </div>
+            <div class="card-body">
+                <h3 class="mb-3">${{ product.Price }}</h3>
+                
+                <p><strong>Supplier:</strong> {{ product.SupplierName }}</p>
+                <p><strong>Category:</strong> {{ product.Category }}</p>
+                <p><strong>Stock:</strong> 
+                    {% if product.StockQuantity > 10 %}
+                        <span class="badge bg-success">In Stock ({{ product.StockQuantity }})</span>
+                    {% elif product.StockQuantity > 0 %}
+                        <span class="badge bg-warning">Low Stock ({{ product.StockQuantity }})</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                    {% endif %}
+                </p>
+                
+                {% if product.StockQuantity > 0 %}
+                <form method="post" action="{{ url_for('cart') }}">
+                    <input type="hidden" name="product_id" value="{{ product.PID }}">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="{{ product.StockQuantity }}" value="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </form>
+                {% else %}
+                <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if branches %}
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Available at Branches</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for branch in branches %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ branch.Bname }}
+                        <span class="badge bg-primary rounded-pill">{{ branch.Quantity }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

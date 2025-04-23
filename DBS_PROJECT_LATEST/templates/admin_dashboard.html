@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - SmartInventory{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Welcome, {{ session.admin_name }}!</h2>
+        <p class="lead">Manage your inventory, users, and orders.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Total Users</h5>
+                        <h2 class="mb-0">{{ user_count }}</h2>
+                    </div>
+                    <i class="fas fa-users fa-3x opacity-50"></i>
+                </div>
+                <a href="{{ url_for('admin_users') }}" class="text-white">View Details <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Total Products</h5>
+                        <h2 class="mb-0">{{ product_count }}</h2>
+                    </div>
+                    <i class="fas fa-box fa-3x opacity-50"></i>
+                </div>
+                <a href="{{ url_for('admin_products') }}" class="text-white">View Details <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Total Orders</h5>
+                        <h2 class="mb-0">{{ order_count }}</h2>
+                    </div>
+                    <i class="fas fa-shopping-cart fa-3x opacity-50"></i>
+                </div>
+                <a href="{{ url_for('admin_orders') }}" class="text-white">View Details <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Recent Orders</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>{{ order.OrderNo }}</td>
+                                <td>{{ order.Date }}</td>
+                                <td>{{ order.CustomerName }}</td>
+                                <td>${{ order.Amount }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin_order_details', order_id=order.OrderNo) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-primary">View All Orders</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Low Stock Products</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Name</th>
+                                <th>Stock</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in low_stock %}
+                            <tr>
+                                <td>{{ product.PID }}</td>
+                                <td>{{ product.Pname }}</td>
+                                <td>
+                                    {% if product.Stock is none %}
+                                        <span class="badge bg-danger">0</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">{{ product.Stock }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('admin_inventory') }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-plus"></i> Add Stock
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('admin_inventory') }}" class="btn btn-sm btn-primary">Manage Inventory</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

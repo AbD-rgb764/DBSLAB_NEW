@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Products - SmartInventory{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Browse Products</h2>
+    </div>
+    <div class="col-md-4">
+        <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="{{ search }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{{ url_for('customer_products') }}" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                        All Categories
+                    </a>
+                    {% for cat in categories %}
+                    <a href="{{ url_for('customer_products', category=cat.Category) }}" class="list-group-item list-group-item-action {% if selected_category == cat.Category %}active{% endif %}">
+                        {{ cat.Category }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="row">
+            {% if products %}
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.Pname }}</h5>
+                            <p class="card-text text-muted">{{ product.Category }}</p>
+                            <p class="card-text fw-bold">${{ product.Price }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="{{ url_for('product_detail', product_id=product.PID) }}" class="btn btn-sm btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No products found. Try a different search or category.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

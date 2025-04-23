@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details - SmartInventory{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Order #{{ order.OrderNo }}</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin_orders') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Order Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Order Date:</strong> {{ order.Date }}</p>
+                <p><strong>Total Amount:</strong> ${{ order.Amount }}</p>
+                <p><strong>Invoice:</strong> 
+                    {% if order.InvoiceID %}
+                    <span class="badge bg-success">Generated (#{{ order.InvoiceID }})</span>
+                    {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                    {% endif %}
+                </p>
+                <p><strong>Employee:</strong> {{ order.EmployeeName or 'Not Assigned' }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Customer Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ order.CustomerName }}</p>
+                <p><strong>Email:</strong> {{ order.CustomerEmail }}</p>
+                <p><strong>Phone:</strong> {{ order.CustomerPhone }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Delivery Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Recipient:</strong> {{ order.RecipientName }}</p>
+                <p><strong>Address:</strong> {{ order.Address }}</p>
+                <p><strong>City:</strong> {{ order.City }}</p>
+                <p><strong>Street:</strong> {{ order.Street }}</p>
+                <p><strong>Country:</strong> {{ order.Country }}</p>
+                <p><strong>Pin Code:</strong> {{ order.PinCode }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Supplier</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.Pname }}</td>
+                                <td>${{ item.Price }}</td>
+                                <td>{{ item.Quantity }}</td>
+                                <td>{{ item.SupplierName }}</td>
+                                <td>${{ item.Price * item.Quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" class="text-end">Total:</th>
+                                <th>${{ order.Amount }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if order.InvoiceID %}
+<div class="row">
+    <div class="col-md-12 text-center mb-4">
+        <a href="{{ url_for('view_invoice', invoice_id=order.InvoiceID) }}" class="btn btn-primary" target="_blank">
+            <i class="fas fa-file-invoice"></i> View Invoice
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
